@@ -1,10 +1,9 @@
 cmake_minimum_required(VERSION 3.24)
 
-project(Tabbedpread VERSION 0.1.0 LANGUAGES CXX RC)
+project(Tabbedpread VERSION 0.1.0 LANGUAGES CXX)
 
 add_executable(tabbedpread WIN32
     src/main.cpp
-    src/tabbedpread.rc
 )
 
 target_compile_features(tabbedpread PRIVATE cxx_std_20)
@@ -32,6 +31,10 @@ target_link_libraries(tabbedpread PRIVATE
 
 if(MSVC)
     target_compile_options(tabbedpread PRIVATE /W4 /permissive- /EHsc /utf-8)
+    target_link_options(tabbedpread PRIVATE
+        /MANIFEST:EMBED
+        "/MANIFESTINPUT:${CMAKE_CURRENT_SOURCE_DIR}/src/tabbedpread.manifest"
+    )
 endif()
 
 set_target_properties(tabbedpread PROPERTIES
