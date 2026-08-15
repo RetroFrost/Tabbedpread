@@ -1,0 +1,9 @@
+build/
+out/
+dist/
+.vs/
+CMakeSettings.json
+*.user
+*.suo
+*.VC.db
+*.zip
