@@ -11,9 +11,15 @@ target_compile_features(tabbedpread PRIVATE cxx_std_20)
 target_compile_definitions(tabbedpread PRIVATE
     UNICODE
     _UNICODE
-    WIN32_LEAN_AND_MEAN
-    NOMINMAX
     _WIN32_WINNT=0x0A00
+)
+
+target_include_directories(tabbedpread PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+)
+
+target_precompile_headers(tabbedpread PRIVATE
+    "$<$<COMPILE_LANGUAGE:CXX>:${CMAKE_CURRENT_SOURCE_DIR}/src/compat.h>"
 )
 
 target_link_libraries(tabbedpread PRIVATE
