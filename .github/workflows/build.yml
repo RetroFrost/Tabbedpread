@@ -1,0 +1,48 @@
+name: Build Windows
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build ${{ matrix.arch }}
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x64
+            cmake_arch: x64
+          - arch: x86
+            cmake_arch: Win32
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure
+        run: cmake -S . -B build -A ${{ matrix.cmake_arch }}
+
+      - name: Build
+        run: cmake --build build --config Release --parallel
+
+      - name: Package
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path dist | Out-Null
+          Copy-Item build/Release/tabbedpread.exe dist/tabbedpread.exe
+          Copy-Item README.md dist/README.md
+          Compress-Archive -Path dist/* -DestinationPath tabbedpread-${{ matrix.arch }}.zip -Force
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tabbedpread-${{ matrix.arch }}
+          path: tabbedpread-${{ matrix.arch }}.zip
+          if-no-files-found: error
